@@ -18,7 +18,7 @@ class Level:
         self.decoration = pygame.sprite.Group()
         for layout_name in ['Terrain','Decoration']:
             layout = import_csv_layout(self.level_data[layout_name])
-            self.create_tile_group(layout, layout_name)
+            self.create_tile_group(layout, layout_name, TILE_SIZE)
             
         self.world_layers = [
             self.terrain,
@@ -26,7 +26,7 @@ class Level:
         ]
     
     def create_tile_index(self):
-        tile_list = import_cut_graphics("./assests/tileset.png", TILE_SIZE)
+        tile_list = import_cut_graphics("../assests/tileset.png", TILE_SIZE)
         for index, tile in enumerate(tile_list):
             self.tile_index[index] = tile
             
@@ -54,6 +54,6 @@ class Level:
                             # self.game.player = Player()
 
     def draw_level(self, surface):
-        for layer in self.world.layers():
+        for layer in self.world_layers:
             for tile in layer.sprites():
-                surface.blit(surface, (tile.rect.x - self.game.camera.level_scroll.x, tile.rect.y - self.game.camera.level_scroll.y))
+                surface.blit(tile.image, (tile.rect.x - self.game.camera.level_scroll.x, tile.rect.y - self.game.camera.level_scroll.y))

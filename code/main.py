@@ -12,6 +12,8 @@ class Game():
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Etheria')
+        self.player = pygame.Rect( (32, 32), (150, 150) )
+        self.camera = Camera(self, 6, 100)
         self.level = Level(maps[1], self, self.screen)
        
     def event_handler(self):
@@ -28,12 +30,11 @@ class Game():
             last_time = time.time()
             self.screen.fill([140, 160, 200])
             
-            # self.camera = Camera(self, 6, 100)
             self.event_handler()           
             self.level.draw_level(self.screen)
         
             
-            
+            pygame.draw.rect(self.screen, [255, 0, 0], self.player)
             self.clock.tick(FPS)
             pygame.display.flip()
             
