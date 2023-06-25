@@ -6,15 +6,15 @@ import time
 from camera import Camera
 from level import Level
 from gamedata import maps
+from player import Player
 
 class Game():
     def __init__(self):
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Etheria')
-        self.player = pygame.Rect( (32, 32), (150, 150) )
-        self.camera = Camera(self, 6, 100)
         self.level = Level(maps[1], self, self.screen)
+        self.camera = Camera(self, 6, 100)
        
     def event_handler(self):
         for event in pygame.event.get():
@@ -27,14 +27,16 @@ class Game():
         self.running = True
         while self.running:
             self.dt = time.time() - last_time
+            self.dt *= 60.0
             last_time = time.time()
             self.screen.fill([140, 160, 200])
             
             self.event_handler()           
             self.level.draw_level(self.screen)
+            self.player.update(self.dt)
+            self.camera.update_position()
         
             
-            pygame.draw.rect(self.screen, [255, 0, 0], self.player)
             self.clock.tick(FPS)
             pygame.display.flip()
             
