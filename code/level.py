@@ -52,7 +52,7 @@ class Level:
         self.level_bottomright = self.terrain.sprites()[len(self.terrain)-1].rect
     
     def create_tile_index(self):
-        tile_list = import_cut_graphics("../assests/tileset.png", TILE_SIZE)
+        tile_list = import_cut_graphics("../assets/tileset.png", TILE_SIZE)
         for index, tile in enumerate(tile_list):
             self.tile_index[index] = tile
             
@@ -80,4 +80,7 @@ class Level:
     def draw_level(self, surface):
         for layer in self.world_layers:
             for tile in layer.sprites():
-                surface.blit(tile.image, (tile.rect.x - self.game.camera.level_scroll.x, tile.rect.y - self.game.camera.level_scroll.y))
+                if layer == self.player_layer:
+                    pass
+                else:
+                    surface.blit(tile.image, (tile.rect.x - self.game.camera.level_scroll.x, tile.rect.y - self.game.camera.level_scroll.y))

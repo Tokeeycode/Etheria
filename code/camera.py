@@ -15,7 +15,7 @@ class Camera():
 		self.level_scroll.x += ((self.player.rect.centerx - self.level_scroll.x - (HALF_WIDTH - self.player.size.x)) / self.interpolation * self.scroll_speed)
 
 	def vertical_scroll(self):
-		self.level_scroll.y += (((self.player.rect.centery - 180) - self.level_scroll.y - (HALF_HEIGHT - self.player.size.y)) / self.interpolation * self.scroll_speed)
+		self.level_scroll.y += (((self.player.rect.centery - 50) - self.level_scroll.y - (HALF_HEIGHT - self.player.size.y)) / self.interpolation * self.scroll_speed)
 
 	def pan_cinematic(self):
 		pass
