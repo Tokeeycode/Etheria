@@ -81,4 +81,3 @@ class Level:
         for layer in self.world_layers:
             for tile in layer.sprites():
                 surface.blit(tile.image, (tile.rect.x - self.game.camera.level_scroll.x, tile.rect.y - self.game.camera.level_scroll.y))
-        print(self.game.player.rect.x)
