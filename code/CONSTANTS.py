@@ -12,3 +12,4 @@ FRAME_DURATIONS = {
     'walk_up': 4,
 }
 CHAR_PATH = '../assets/player/'
+PLAYER_ANIMATION_SPEED = 0.15

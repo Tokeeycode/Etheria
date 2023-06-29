@@ -15,52 +15,81 @@ class Player(Entity):
 		self.status = 'down'
 		self.animation = self.animations[self.status]
 		self.frame_index = 0
-		self.animation_speed = 0.15
+		self.animation_speed = PLAYER_ANIMATION_SPEED
+		self.attacking = False
+		self.attack_cooldown = 50
+		self.attack_time = None
   
 	def import_player_assets(self):
-		self.animations = {'idle_down':[], 'idle_left':[], 'idle_right':[], 'idle_up':[], 'up':[], 'down':[], 'left':[], 'right':[]}
+		self.animations = {'idle_down':[], 'idle_left':[], 'idle_right':[], 'idle_up':[], 'up':[], 'down':[], 'left':[], 'right':[], 'attack_up':[], 'attack_down':[], 'attack_left':[], 'attack_right':[], 'spells':[]}
 
 		for animation in self.animations.keys():
 			full_path = CHAR_PATH + animation
 			self.animations[animation] = import_folder(full_path)
+   
+	def input(self):
+		if not self.attacking:
+			keys = pygame.key.get_pressed()
 			
-			
+	
 	def move(self, dt):
 		keys = pygame.key.get_pressed()
-		if keys[pygame.K_w]:
+		if keys[pygame.K_w] and not self.attacking:
 			self.status = 'up'
 			self.velocity.y = -self.speed * dt
-		elif keys[pygame.K_s]:
+		elif keys[pygame.K_s] and not self.attacking:
 			self.status = 'down'
 			self.velocity.y = self.speed * dt
 		else:
 			self.velocity.y = 0
-		if keys[pygame.K_a]:
+		if keys[pygame.K_a] and not self.attacking:
 			self.status = 'left'
 			self.velocity.x = -self.speed * dt
-		elif keys[pygame.K_d]:
+		elif keys[pygame.K_d] and not self.attacking:
 			self.status = 'right'
 			self.velocity.x = self.speed * dt
 		else:
 			self.velocity.x = 0
-   
-	def get_status(self):
 
+		if keys[pygame.K_r] and not self.attacking:
+			self.attacking = True
+			self.attack_time = pygame.time.get_ticks()
+	  
+	def get_status(self):
 		if self.velocity.x == 0 and self.velocity.y == 0:
-			if not 'idle' in self.status:
+			if not 'idle' in self.status and not 'attack' in self.status:
 				self.status = 'idle' + '_' + self.status
+	
+		if self.attacking:
+			self.velocity.x = 0
+			self.velocity.y = 0
+			if not 'attack' in self.status:
+				self.status = self.status.replace('idle', 'attack')
+			else:
+				self.status = self.status
+		else:
+			if 'attack' in self.status:
+				self.status = self.status.replace('attack','idle')
 	
 	def animate(self):
 		animation = self.animations[self.status]
-		self.frame_index += self.animation_speed
+		self.frame_index += self.animation_speed * self.game.dt
 		if self.frame_index >= len(animation):
 			self.frame_index = 0
+		self.image = pygame.transform.scale(animation[int(self.frame_index)], (64, 64))
 		self.rect = self.image.get_rect(center = self.rect.center)
 	
+	def cooldowns(self):
+		current_time = pygame.time.get_ticks()
+		
+		if self.attacking:
+			if current_time - self.attack_time >= self.attack_cooldown:
+				self.attacking = False	 
 	def update(self, dt):
 		self.move(dt)
 		self.get_status()
 		self.animate()
+		self.cooldowns()
 		self.rect.x += self.velocity.x
 		self.physics.horizontal_movement_collision(self, self.game.level.terrain)
 		self.rect.y += self.velocity.y
@@ -68,6 +97,10 @@ class Player(Entity):
 		if self.velocity.magnitude() != 0:
 			self.velocity = self.velocity.normalize()
 		self.draw(self.game.screen)
+		if self.attacking:
+			self.animation_speed = 0.50
+		else:
+			self.animation_speed = PLAYER_ANIMATION_SPEED
    
 	def draw(self, surface):
 		surface.blit(self.image, self.rect.topleft - self.game.camera.level_scroll)

@@ -75,7 +75,7 @@ class Level:
                 y = row_index * tilesize
                 if value == '0':
                     self.player_spawn = pygame.math.Vector2(x, y)
-                    self.game.player = Player(self.game, 32, (x, y), 5, [self.player_layer])
+                    self.game.player = Player(self.game, 32, (x, y), 4, [self.player_layer])
 
     def draw_level(self, surface):
         for layer in self.world_layers:
