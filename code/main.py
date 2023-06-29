@@ -12,7 +12,7 @@ from projectile import Bullet
 class Game():
 	def __init__(self):
 		self.clock = pygame.time.Clock()
-		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SCALED)
 		pygame.display.set_caption('Etheria')
 		self.level = Level(maps[1], self, self.screen)
 		self.camera = Camera(self, 6, 100)
@@ -28,8 +28,10 @@ class Game():
 					self.player.attack_time = pygame.time.get_ticks()  
 					self.player.cooldowns(PLAYER_ATTACK_COOLDOWN)
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_r:
-					self.player.attacking = True
+				if event.key == pygame.K_F11:
+					pygame.display.toggle_fullscreen()
+				if event.key == pygame.K_r and not self.player.casting:
+					self.player.casting = True
 					self.player.projectiles.append(
 						Bullet(self.player.rect.centerx - self.camera.level_scroll.x, self.player.rect.centery - self.camera.level_scroll.y)
 					)

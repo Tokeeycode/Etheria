@@ -1,4 +1,3 @@
-from typing import Self
 from BLACKFORGE2 import *
 from CONSTANTS import *
 from projectile import Bullet
@@ -17,6 +16,7 @@ class Player(Entity):
 		self.frame_index = 0
 		self.animation_speed = PLAYER_ANIMATION_SPEED
 		self.attacking = False
+		self.casting = False
 		self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
 		self.attack_time = None
 		self.projectiles = []
@@ -31,7 +31,6 @@ class Player(Entity):
 	def input(self):
 		if not self.attacking:
 			keys = pygame.key.get_pressed()
-			
 	
 	def move(self, dt):
 		keys = pygame.key.get_pressed()
@@ -52,8 +51,6 @@ class Player(Entity):
 		else:
 			self.velocity.x = 0
 
-		
-	
 	def projectile_handler(self):
 		for projectile in self.projectiles:
 			projectile.draw(self.game.screen)
@@ -80,20 +77,20 @@ class Player(Entity):
 		self.frame_index += self.animation_speed * self.game.dt
 		if self.frame_index >= len(animation):
 			self.frame_index = 0
-		self.image = pygame.transform.scale(animation[int(self.frame_index)], (64, 64))
+		self.image = pygame.transform.scale(animation[int(self.frame_index)], PLAYER_IMG_SCALING)
 		self.rect = self.image.get_rect(center = self.rect.center)
 	
 	def cooldowns(self, time):
-		current_time = pygame.time.get_ticks()
-		
-		if self.attacking:
-			if current_time - self.attack_time >= time:
-				self.attacking = False	 
+		if int(self.attack_cooldown) <= 0:
+			self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
+			self.attacking = False
+			self.casting = False
+			# print("attack cooldown reset")
+
 	def update(self, dt):
 		self.move(dt)
 		self.get_status()
 		self.animate()
-		self.cooldowns(PLAYER_ATTACK_COOLDOWN)
 		self.projectile_handler()
 		self.rect.x += self.velocity.x
 		self.physics.horizontal_movement_collision(self, self.game.level.terrain)
@@ -102,10 +99,12 @@ class Player(Entity):
 		if self.velocity.magnitude() != 0:
 			self.velocity = self.velocity.normalize()
 		self.draw(self.game.screen)
-		if self.attacking:
-			self.animation_speed = 0.50
-		else:
-			self.animation_speed = PLAYER_ANIMATION_SPEED
+
+		""" COOLDOWN TIMER """
+		if self.attacking or self.casting and self.attack_cooldown > 0:
+			self.attack_cooldown -= 1 * self.game.dt
+		self.cooldowns(PLAYER_ATTACK_COOLDOWN)
+		# print(self.attack_cooldown, "attack status", self.casting)
    
 	def draw(self, surface):
 		surface.blit(self.image, self.rect.topleft - self.game.camera.level_scroll)

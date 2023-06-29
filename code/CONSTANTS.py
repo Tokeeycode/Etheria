@@ -23,4 +23,5 @@ SPELL_FRAME_DURATIONS = {
     'fireball': 2,
 }
 SPELL_PATH = '../assets/player/spells/' 
-PLAYER_ATTACK_COOLDOWN = 10
+PLAYER_ATTACK_COOLDOWN = 25
+PLAYER_IMG_SCALING = (96, 96)
