@@ -7,6 +7,7 @@ from camera import Camera
 from level import Level
 from gamedata import maps
 from player import Player
+from projectile import Bullet
 
 class Game():
 	def __init__(self):
@@ -25,8 +26,15 @@ class Game():
 				if event.button == 1:
 					self.player.attacking = True
 					self.player.attack_time = pygame.time.get_ticks()  
-					self.player.cooldowns()
-		
+					self.player.cooldowns(PLAYER_ATTACK_COOLDOWN)
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_r:
+					self.player.attacking = True
+					self.player.projectiles.append(
+						Bullet(self.player.rect.centerx - self.camera.level_scroll.x, self.player.rect.centery - self.camera.level_scroll.y)
+					)
+					self.player.cooldowns(PLAYER_ATTACK_COOLDOWN)
+     		
 	def run(self):
 		last_time = time.time()
 		

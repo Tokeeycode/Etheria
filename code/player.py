@@ -1,7 +1,7 @@
 from typing import Self
 from BLACKFORGE2 import *
-
 from CONSTANTS import *
+from projectile import Bullet
 
 class Player(Entity):
 	def __init__(self, game, size:int, position:tuple, speed:int, groups:list):
@@ -17,11 +17,12 @@ class Player(Entity):
 		self.frame_index = 0
 		self.animation_speed = PLAYER_ANIMATION_SPEED
 		self.attacking = False
-		self.attack_cooldown = 50
+		self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
 		self.attack_time = None
+		self.projectiles = []
   
 	def import_player_assets(self):
-		self.animations = {'idle_down':[], 'idle_left':[], 'idle_right':[], 'idle_up':[], 'up':[], 'down':[], 'left':[], 'right':[], 'attack_up':[], 'attack_down':[], 'attack_left':[], 'attack_right':[], 'spells':[]}
+		self.animations = {'idle_down':[], 'idle_left':[], 'idle_right':[], 'idle_up':[], 'up':[], 'down':[], 'left':[], 'right':[], 'attack_up':[], 'attack_down':[], 'attack_left':[], 'attack_right':[]}
 
 		for animation in self.animations.keys():
 			full_path = CHAR_PATH + animation
@@ -51,10 +52,13 @@ class Player(Entity):
 		else:
 			self.velocity.x = 0
 
-		if keys[pygame.K_r] and not self.attacking:
-			self.attacking = True
-			self.attack_time = pygame.time.get_ticks()
-	  
+		
+	
+	def projectile_handler(self):
+		for projectile in self.projectiles:
+			projectile.draw(self.game.screen)
+			projectile.update()
+
 	def get_status(self):
 		if self.velocity.x == 0 and self.velocity.y == 0:
 			if not 'idle' in self.status and not 'attack' in self.status:
@@ -79,17 +83,18 @@ class Player(Entity):
 		self.image = pygame.transform.scale(animation[int(self.frame_index)], (64, 64))
 		self.rect = self.image.get_rect(center = self.rect.center)
 	
-	def cooldowns(self):
+	def cooldowns(self, time):
 		current_time = pygame.time.get_ticks()
 		
 		if self.attacking:
-			if current_time - self.attack_time >= self.attack_cooldown:
+			if current_time - self.attack_time >= time:
 				self.attacking = False	 
 	def update(self, dt):
 		self.move(dt)
 		self.get_status()
 		self.animate()
-		self.cooldowns()
+		self.cooldowns(PLAYER_ATTACK_COOLDOWN)
+		self.projectile_handler()
 		self.rect.x += self.velocity.x
 		self.physics.horizontal_movement_collision(self, self.game.level.terrain)
 		self.rect.y += self.velocity.y

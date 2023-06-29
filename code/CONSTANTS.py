@@ -13,3 +13,14 @@ FRAME_DURATIONS = {
 }
 CHAR_PATH = '../assets/player/'
 PLAYER_ANIMATION_SPEED = 0.15
+SPELLS = {
+    # type         size speed
+    '': [0, 0],
+    'fireball': [32, 6],
+}
+
+SPELL_FRAME_DURATIONS = {
+    'fireball': 2,
+}
+SPELL_PATH = '../assets/player/spells/' 
+PLAYER_ATTACK_COOLDOWN = 10
