@@ -25,3 +25,7 @@ SPELL_FRAME_DURATIONS = {
 SPELL_PATH = '../assets/player/spells/' 
 PLAYER_ATTACK_COOLDOWN = 25
 PLAYER_IMG_SCALING = (96, 96)
+
+weapon_data = {
+    'sword': {'cooldown': 20, 'damage': 5, 'graphic': ''}
+}

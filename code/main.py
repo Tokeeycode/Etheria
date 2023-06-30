@@ -33,7 +33,7 @@ class Game():
 				if event.key == pygame.K_r and not self.player.casting:
 					self.player.casting = True
 					self.player.projectiles.append(
-						Bullet(self.player.rect.centerx - self.camera.level_scroll.x, self.player.rect.centery - self.camera.level_scroll.y)
+						Bullet(self.player.rect.centerx - self.camera.level_scroll.x, self.player.rect.centery - self.camera.level_scroll.y, self)
 					)
 					self.player.cooldowns(PLAYER_ATTACK_COOLDOWN)
      		

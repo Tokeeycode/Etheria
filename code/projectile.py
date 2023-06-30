@@ -3,7 +3,8 @@ from BLACKFORGE2 import *
 from CONSTANTS import *
 
 class Bullet:
-    def __init__(self, x, y):
+    def __init__(self, x, y, game):
+        self.game = game
         self.pos = (x, y)
         mx, my = pygame.mouse.get_pos()
         self.dir = (mx - x, my - y)
@@ -20,7 +21,7 @@ class Bullet:
         self.bullet = pygame.transform.rotate(self.bullet[0], angle)
         self.speed = 5
 
-    def update(self):  
+    def update(self,):  
         self.pos = (self.pos[0]+self.dir[0]*self.speed, 
                     self.pos[1]+self.dir[1]*self.speed)
 
