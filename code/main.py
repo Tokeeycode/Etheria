@@ -15,7 +15,7 @@ class Game():
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SCALED)
 		pygame.display.set_caption('Etheria')
 		self.level = Level(maps[1], self, self.screen)
-		self.camera = Camera(self, 6, 100)
+		self.camera = Camera(self, self.player, 6, 100)
 		pygame.key.set_repeat(0)
 	   
 	def event_handler(self):
@@ -33,7 +33,7 @@ class Game():
 				if event.key == pygame.K_r and not self.player.casting:
 					self.player.casting = True
 					self.player.projectiles.append(
-						Bullet(self.player.rect.centerx - self.camera.level_scroll.x, self.player.rect.centery - self.camera.level_scroll.y, self)
+						Bullet(self, *self.player.hurtbox.topleft, 'fireball', 32, self.level.projectile_group)
 					)
 					self.player.cooldowns(PLAYER_ATTACK_COOLDOWN)
      		
@@ -50,7 +50,7 @@ class Game():
 			self.event_handler()           
 			self.level.draw_level(self.screen)
 			self.player.update(self.dt)
-			self.camera.update_position()
+			self.camera.update_position(self.level.level_topleft, self.level.level_bottomright, self.level.level_width, self.level.level_height, SCREEN_WIDTH, SCREEN_HEIGHT)
 		
 			
 			self.clock.tick(FPS)

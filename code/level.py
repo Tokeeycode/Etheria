@@ -35,6 +35,7 @@ class Level:
         self.on_screen_tiles = pygame.sprite.Group()
         self.terrain = pygame.sprite.Group()
         self.decoration = pygame.sprite.Group()
+        self.projectile_group = pygame.sprite.Group()
         self.player_layer = pygame.sprite.GroupSingle()
         for layout_name in ['Terrain','Decoration']:
             layout = import_csv_layout(self.level_data[layout_name])
@@ -46,7 +47,8 @@ class Level:
         self.world_layers = [
             self.decoration,
             self.terrain,
-            self.player_layer
+            self.player_layer,
+            # self.projectile_group
         ]
         self.level_topleft = self.terrain.sprites()[0].rect
         self.level_bottomright = self.terrain.sprites()[len(self.terrain)-1].rect
@@ -75,7 +77,7 @@ class Level:
                 y = row_index * tilesize
                 if value == '0':
                     self.player_spawn = pygame.math.Vector2(x, y)
-                    self.game.player = Player(self.game, 32, (x, y), 4, [self.player_layer])
+                    self.game.player = Player(self.game, PLAYER_IMG_SCALING[0], (x, y), PLAYER_SPEED, [self.player_layer])
 
     def draw_level(self, surface):
         for layer in self.world_layers:

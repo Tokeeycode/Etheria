@@ -20,6 +20,8 @@ class Player(Entity):
 		self.attack_cooldown = PLAYER_ATTACK_COOLDOWN
 		self.attack_time = None
 		self.projectiles = []
+
+		self.hurtbox = pygame.Rect(self.rect.topleft, (20,20))
   
 	def import_player_assets(self):
 		self.animations = {'idle_down':[], 'idle_left':[], 'idle_right':[], 'idle_up':[], 'up':[], 'down':[], 'left':[], 'right':[], 'attack_up':[], 'attack_down':[], 'attack_left':[], 'attack_right':[]}
@@ -37,24 +39,34 @@ class Player(Entity):
 		if keys[pygame.K_w] and not self.attacking:
 			self.status = 'up'
 			self.velocity.y = -self.speed * dt
+			for projectile in self.projectiles:
+				projectile.position.y += PLAYER_SPEED
 		elif keys[pygame.K_s] and not self.attacking:
 			self.status = 'down'
 			self.velocity.y = self.speed * dt
+			for projectile in self.projectiles:
+				projectile.position.y -= PLAYER_SPEED
 		else:
 			self.velocity.y = 0
 		if keys[pygame.K_a] and not self.attacking:
 			self.status = 'left'
 			self.velocity.x = -self.speed * dt
+			for projectile in self.projectiles:
+				projectile.position.x += PLAYER_SPEED
 		elif keys[pygame.K_d] and not self.attacking:
 			self.status = 'right'
 			self.velocity.x = self.speed * dt
+			for projectile in self.projectiles:
+				projectile.position.x -= PLAYER_SPEED
 		else:
 			self.velocity.x = 0
 
 	def projectile_handler(self):
 		for projectile in self.projectiles:
-			projectile.draw(self.game.screen)
 			projectile.update()
+			projectile.draw(self.game.screen)
+			# pygame.draw.rect(pygame.display.get_surface(), "red", projectile.rect)
+			pass
 
 	def get_status(self):
 		if self.velocity.x == 0 and self.velocity.y == 0:
@@ -92,9 +104,9 @@ class Player(Entity):
 		self.get_status()
 		self.animate()
 		self.projectile_handler()
-		self.rect.x += self.velocity.x
+		self.rect.x += self.velocity.x * dt
 		self.physics.horizontal_movement_collision(self, self.game.level.terrain)
-		self.rect.y += self.velocity.y
+		self.rect.y += self.velocity.y * dt
 		self.physics.vertical_movement_collision(self, self.game.level.terrain)
 		if self.velocity.magnitude() != 0:
 			self.velocity = self.velocity.normalize()
@@ -105,8 +117,16 @@ class Player(Entity):
 			self.attack_cooldown -= 1 * self.game.dt
 		self.cooldowns(PLAYER_ATTACK_COOLDOWN)
 		# print(self.attack_cooldown, "attack status", self.casting)
-   
+
+		# update hurtbox
+		# self.hurtbox.center = self.rect.center
+		self.hurtbox.center = self.rect.center - self.game.camera.level_scroll
+
+		print('rect position', self.hurtbox.center)
+		
 	def draw(self, surface):
 		surface.blit(self.image, self.rect.topleft - self.game.camera.level_scroll)
+		pygame.draw.rect(self.game.screen, "red", self.rect)
+		pygame.draw.rect(self.game.screen, "white", self.hurtbox)
 
 		
